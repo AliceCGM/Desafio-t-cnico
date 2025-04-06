@@ -1,0 +1,27 @@
+Questão 2.
+Para cada departamento, realize uma consulta em PostgresSQL que mostre o nome do departamento, a quantidade de empregados, a média salarial, o maior e o menor salários. Ordene o resultado pela maior média salarial.
+
+Dicas: você pode usar a função COALESCE(value , 0) para substituir um valor nulo por zero e pode usar a função ROUND(value, 2) para mostrar valores com duas casas decimais.
+
+No arquivo base_dados_questao2.sql, em anexo no email enviado com o link deste forms, está o banco de dados. Recomendo rodar localmente para analisar o conteúdo das tabelas, testar e validar sua consulta.
+
+Coloque o link do Gist com o seu código no campo abaixo.
+*RESPOSTA*
+SELECT 
+    d.nome AS departamento,
+    COUNT(DISTINCT e.matr) AS qtd_empregados,
+    ROUND(COALESCE(AVG(v.valor), 0), 2) AS media_salarial,
+    ROUND(COALESCE(MAX(v.valor), 0), 2) AS maior_salario,
+    ROUND(COALESCE(MIN(v.valor), 0), 2) AS menor_salario
+FROM 
+    departamento d
+LEFT JOIN 
+    empregado e ON d.cod_dep = e.lotacao
+LEFT JOIN 
+    emp_venc ev ON e.matr = ev.matr
+LEFT JOIN 
+    vencimento v ON ev.cod_venc = v.cod_venc
+GROUP BY 
+    d.nome
+ORDER BY 
+    media_salarial DESC;
